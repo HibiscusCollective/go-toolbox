@@ -1,2 +1,6 @@
 [tools]
 go = "1.23.6"
+
+[tasks.benchmark]
+description = "Run benchmarks for all libraries"
+run = "go test ./maps/... -bench . -test.benchmem"

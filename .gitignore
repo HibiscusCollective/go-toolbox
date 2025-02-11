@@ -20,8 +20,15 @@
 !licenses
 !licenses/**/*.txt
 
+## Allow go workspace
+!go.work
+!**/go.mod
+!**/go.sum
+!**/*.go
+
 ## Allow subfolders
 !.github
 !docs
+!maps
 
 
