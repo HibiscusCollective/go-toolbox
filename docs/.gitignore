@@ -1,0 +1,6 @@
+## Allow contributor documentations
+!contributors
+!contributors/decisions/
+!contributors/templates/
+
+!**/*.md

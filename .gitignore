@@ -1,0 +1,27 @@
+## Ignore all by default
+*
+
+## Allow git/github config
+!.gitignore
+
+## Allow build/ci config
+!.editorconfig
+!.windsurfrules
+!mise.toml
+!Cargo.toml
+!Cargo.lock
+
+## Allow documentation
+!README.md
+
+## Allow licenses
+!LICENSE
+!ThirdPartyLicenses.md
+!licenses
+!licenses/**/*.txt
+
+## Allow subfolders
+!.github
+!docs
+
+

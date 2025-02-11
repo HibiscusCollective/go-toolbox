@@ -1,0 +1,6 @@
+## Allow github actions
+!workflows
+!workflows/**/*.yml
+
+## Allow github config
+!CODEOWNERS
