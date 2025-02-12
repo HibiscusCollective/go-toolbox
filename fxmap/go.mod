@@ -1,4 +1,4 @@
-module github.com/HibiscusCollective/go-toolbox/maps
+module github.com/HibiscusCollective/go-toolbox/fxmap
 
 go 1.23
 

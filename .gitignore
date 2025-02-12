@@ -29,6 +29,6 @@
 ## Allow subfolders
 !.github
 !docs
-!maps
+!fxmap
 
 
