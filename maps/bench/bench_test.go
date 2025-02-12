@@ -14,15 +14,13 @@ func BenchmarkInvertControl(b *testing.B) {
 	for name, items := range testData {
 		b.Run(name, func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				b.RunParallel(func(pb *testing.PB) {
-					inverted := make(map[int64]string)
-					for key, val := range items {
-						inverted[key] = val
-					}
-				})
+				inverted := make(map[int64]string)
+				for key, val := range items {
+					inverted[key] = val
+				}
 
-				b.ReportAllocs()
 			}
+			b.ReportAllocs()
 		})
 	}
 }
