@@ -11,6 +11,9 @@
 ## Allow package management
 !mise.toml
 
+## Allow build scripts
+!lefthook.yml
+
 ## Allow documentation
 !docs/
 !docs/**/
@@ -23,9 +26,7 @@
 !LICENSE
 !README.md
 
-## Allow go workspace
-!go.work
-!go.work.sum
+## Allow go files
 !**/go.mod
 !**/go.sum
 !**/*.go
