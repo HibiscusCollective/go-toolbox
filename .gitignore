@@ -1,7 +1,8 @@
 ## Ignore all by default
 *
 
-## Allow git/github config
+## Allow git/github config=
+!.github
 !.gitignore
 
 ## Allow build/ci config
@@ -22,13 +23,11 @@
 
 ## Allow go workspace
 !go.work
+!go.work.sum
 !**/go.mod
 !**/go.sum
 !**/*.go
 
 ## Allow subfolders
-!.github
 !docs
 !fxmap
-
-

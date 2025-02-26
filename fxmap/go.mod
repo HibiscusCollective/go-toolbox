@@ -1,6 +1,6 @@
 module github.com/HibiscusCollective/go-toolbox/fxmap
 
-go 1.23
+go 1.24
 
 require (
 	github.com/gofrs/uuid/v5 v5.3.1
