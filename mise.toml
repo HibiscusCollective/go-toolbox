@@ -1,5 +1,6 @@
 [tools]
 go = "1.24.0"
+lefthook = "1.11.2"
 
 [tasks.benchmark]
 description = "Run benchmarks for all libraries"

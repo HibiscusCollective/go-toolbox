@@ -1,29 +1,27 @@
 ## Ignore all by default
 *
 
-## Allow git/github config=
-!.github
+## Allow config
+!.github/
+!.vscode/
 !.gitignore
-!.github/workflows
-!.github/workflows/**
-!.github/workflows/**/*.yml
-!CODEOWNERS
-
-## Allow build/ci config
-!.editorconfig
 !.windsurfrules
+!.editorconfig
+
+## Allow package management
 !mise.toml
-!Cargo.toml
-!Cargo.lock
 
 ## Allow documentation
-!README.md
+!docs/
+!docs/**/
+!docs/**/*.md
 
-## Allow licenses
+!licenses/
+!licenses/*.txt
+!licenses/*.md
+
 !LICENSE
-!ThirdPartyLicenses.md
-!licenses
-!licenses/**/*.txt
+!README.md
 
 ## Allow go workspace
 !go.work
@@ -32,6 +30,5 @@
 !**/go.sum
 !**/*.go
 
-## Allow subfolders
-!docs
+## Allow packages
 !fxmap
