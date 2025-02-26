@@ -4,6 +4,10 @@
 ## Allow git/github config=
 !.github
 !.gitignore
+!.github/workflows
+!.github/workflows/**
+!.github/workflows/**/*.yml
+!CODEOWNERS
 
 ## Allow build/ci config
 !.editorconfig
