@@ -1,0 +1,34 @@
+assert_lefthook_installed: true
+
+extends:
+  - config/workflow.yml
+  - config/pre-commit/lint/yaml.yml
+
+pre-commit:
+  jobs:
+    - name: "Ensure packages are in a good state"
+      id: group_package_managers
+      group:
+        parallel: true
+        jobs:
+          - name: "Go mod tidy"
+            id: go_mod_tidy
+            run: "mise tidy"
+    - name: "Run linters & formatters"
+      id: group_linters_formatters
+      group:
+        parallel: true
+        jobs:
+          - name: "Lint go files"
+            id: lint_go
+            group:
+              piped: true
+              stage_fixed: true
+              jobs:
+                - name: "Format go files"
+                  id: format_go
+                  glob: "**/*.go"
+                  run: gofmt -w {staged_files}
+                - name: "Go vet"
+                  id: go_vet
+                  run: mise vet {staged_files}

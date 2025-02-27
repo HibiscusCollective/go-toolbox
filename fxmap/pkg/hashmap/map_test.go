@@ -1,4 +1,4 @@
-package fxmap_test
+package hashmap_test
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 	"hash/crc32"
 	"testing"
 
-	"github.com/HibiscusCollective/go-toolbox/fxmap"
+	"github.com/HibiscusCollective/go-toolbox/fxmap/pkg/hashmap"
 	"github.com/onsi/gomega"
 )
 
@@ -17,15 +17,15 @@ func TestNew(t *testing.T) {
 
 	tests := map[string]test{
 		"should return an error if the hash function fails": func(g gomega.Gomega) {
-			_, err := fxmap.NewWith32bitHashFunction(
+			_, err := hashmap.NewWith32bitHashFunction(
 				map[int32]string{1: "one"},
 				newBrokenHash32Fn("boom"),
 			)
 
-			var herr fxmap.HashError
+			var herr hashmap.HashError
 			g.Expect(err).To(gomega.MatchError(func(err error) bool {
 				return errors.As(err, &herr)
-			}, "fxmap.HashError"))
+			}, "hashmap.HashError"))
 
 			g.Expect(herr.HashFn().Algorithm).To(gomega.Equal("fxmap_test.brokenHash32Fn"))
 			g.Expect(herr.HashFn().Size).To(gomega.Equal(32))
@@ -47,17 +47,17 @@ func TestInvert(t *testing.T) {
 
 	tests := map[string]test{
 		"should return nil given nil": func(g gomega.Gomega) {
-			got := fxmap.Invert[int, int](nil)
+			got := hashmap.Invert[int, int](nil)
 
 			g.Expect(got).To(gomega.BeNil())
 		},
 		"should return empty map given empty map": func(g gomega.Gomega) {
-			got := fxmap.Invert(map[int]int{})
+			got := hashmap.Invert(map[int]int{})
 
 			g.Expect(got).To(gomega.BeEmpty())
 		},
 		"should return a map with the values in place of the keys": func(g gomega.Gomega) {
-			got := fxmap.Invert(map[int]string{1: "one", 2: "two"})
+			got := hashmap.Invert(map[int]string{1: "one", 2: "two"})
 
 			g.Expect(got).Should(gomega.Equal(map[string]int{"one": 1, "two": 2}))
 		},

@@ -1,0 +1,12 @@
+["tidy:fxmap"]
+description = "Run go mod tidy"
+dir = "fxmap"
+sources = ["go.mod"]
+outputs = ["go.sum"]
+run = 'go mod tidy'
+
+["vet:fxmap"]
+description = "Run go vet"
+dir = "fxmap"
+sources = ["*.go"]
+run = 'go vet ./...'

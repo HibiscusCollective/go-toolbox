@@ -3,7 +3,7 @@ package bench
 import (
 	"testing"
 
-	"github.com/HibiscusCollective/go-toolbox/fxmap"
+	"github.com/HibiscusCollective/go-toolbox/fxmap/pkg/hashmap"
 	"github.com/jaswdr/faker/v2"
 )
 
@@ -38,7 +38,7 @@ func RunInvertExperimentBenchmark(items map[int64]string) func(b *testing.B) {
 	return func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			b.StartTimer()
-			fxmap.Invert(items)
+			hashmap.Invert(items)
 			b.StopTimer()
 		}
 

@@ -1,4 +1,4 @@
-package fxmap
+package hashmap
 
 import (
 	"bytes"
