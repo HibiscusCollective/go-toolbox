@@ -6,7 +6,7 @@ extends:
 
 pre-commit:
   jobs:
-    - name: "Ensure packages are in a good state"
+    - name: "Tidy dependencies"
       id: group_package_managers
       group:
         parallel: true
