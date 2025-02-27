@@ -31,5 +31,8 @@
 !**/go.sum
 !**/*.go
 
+## Allow go tool managment
+!.tools
+
 ## Allow packages
 !fxmap

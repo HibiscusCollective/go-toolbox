@@ -1,11 +1,18 @@
 assert_lefthook_installed: true
 
-extends:
-  - config/workflow.yml
-  - config/pre-commit/lint/yaml.yml
-
 pre-commit:
+  piped: true
   jobs:
+    - name: "Ensure tools are available"
+      id: ensure_tools
+      group:
+        piped: true
+        jobs:
+          - name: "Ensure mise is installed"
+            run: "mise version"
+            fail_text: "Please install mise from mise.jdx.dev"
+          - name: "Ensure tools are installed"
+            run: "mise install"
     - name: "Tidy dependencies"
       id: group_package_managers
       group:
@@ -27,8 +34,14 @@ pre-commit:
               jobs:
                 - name: "Format go files"
                   id: format_go
+                  stage_fixed: true
                   glob: "**/*.go"
                   run: gofmt -w {staged_files}
                 - name: "Go vet"
                   id: go_vet
                   run: mise vet
+                - name: "Run revive"
+                  id: revive
+                  stage_fixed: true
+                  glob: "**/*.go"
+                  run: REVIVE_FORCE_COLOR=1 revive -formatter stylish {staged_files}
