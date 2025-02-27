@@ -31,4 +31,4 @@ pre-commit:
                   run: gofmt -w {staged_files}
                 - name: "Go vet"
                   id: go_vet
-                  run: mise vet {staged_files}
+                  run: mise vet
