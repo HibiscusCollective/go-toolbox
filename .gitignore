@@ -7,6 +7,9 @@
 !.gitignore
 !.windsurfrules
 !.editorconfig
+!.config
+
+!.config/revive.toml
 
 ## Allow package management
 !mise.toml

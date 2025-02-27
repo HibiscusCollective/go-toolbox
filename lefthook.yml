@@ -44,4 +44,4 @@ pre-commit:
                   id: revive
                   stage_fixed: true
                   glob: "**/*.go"
-                  run: REVIVE_FORCE_COLOR=1 revive -formatter stylish {staged_files}
+                  run: REVIVE_FORCE_COLOR=1 revive -config .config/revive.toml -formatter stylish {staged_files}
