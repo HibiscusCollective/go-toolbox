@@ -16,11 +16,19 @@ func TestGenerateFromTemplate(t *testing.T) {
 	t.Parallel()
 
 	cases := map[string]func(g gomega.Gomega){
+		"should fail to generate a lefthook config file with invalid project config json payload": func(g gomega.Gomega) {
+			var got strings.Builder
+
+			err := gen.New().ProjectHooks(&got, strings.NewReader("{!}"))
+
+			g.Expect(err).To(gomega.MatchError(
+				"failed to parse project config: invalid character '!' looking for beginning of object key string",
+			))
+		},
 		"should generate a valid lefthook config file from template": func(g gomega.Gomega) {
 			var got strings.Builder
-			tmpl := gen.Templates()
 
-			err := gen.Project(&got, tmpl, []byte(`{"name": "Test Project", "path": "test"}`))
+			err := gen.New().ProjectHooks(&got, strings.NewReader(`{"name": "Test Project", "path": "test"}`))
 
 			g.Expect(err).To(gomega.BeNil())
 			g.Expect(got.String()).To(gomega.MatchYAML(want))

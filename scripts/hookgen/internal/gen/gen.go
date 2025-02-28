@@ -3,6 +3,7 @@ package gen
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 )
 
@@ -17,7 +18,31 @@ type ProjectConfig struct {
 	Path string `json:"path"`
 }
 
-// Project writes the template to the writer using project config
-func Project(w io.Writer, tmpl Executer, data json.RawMessage) error {
-	return tmpl.Execute(w, ProjectConfig{Name: "Test Project", Path: "test"})
+// Generator generates a lefthook config file
+type Generator struct {
+	tmpl Executer
+}
+
+// New returns a new Generator
+func New(opts ...func(*Generator)) Generator {
+	g := Generator{
+		tmpl: Templates(),
+	}
+
+	for _, opt := range opts {
+		opt(&g)
+	}
+
+	return g
+}
+
+// ProjectHooks writes the template to the writer using project config
+func (g Generator) ProjectHooks(w io.Writer, r io.Reader) error {
+	var cfg ProjectConfig
+
+	if err := json.NewDecoder(r).Decode(&cfg); err != nil {
+		return fmt.Errorf("failed to parse project config: %w", err)
+	}
+
+	return g.tmpl.Execute(w, cfg)
 }
