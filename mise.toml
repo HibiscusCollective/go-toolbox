@@ -1,6 +1,22 @@
 [tools]
 go = "1.24.0"
 lefthook = "1.11.2"
+revive = "1.7.0"
+
+[task_config]
+includes = []
+
+[tasks.tidy]
+description = "Tidy go modules"
+depends = ["tidy:*"]
+
+[tasks.vet]
+description = "Run go vet"
+depends = ["vet:*"]
+
+[tasks.lint]
+description = "Run linters and formatters"
+depends = ["lint:*"]
 
 [tasks.benchmark]
 description = "Run benchmarks for all libraries"
