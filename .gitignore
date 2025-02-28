@@ -15,7 +15,8 @@
 !mise.toml
 
 ## Allow build scripts
-!lefthook.yml
+!.lefthook.yml
+!.lefthook.yml.tmpl
 
 ## Allow documentation
 !docs/
@@ -37,5 +38,10 @@
 ## Allow go tool managment
 !.tools
 
+## Allow scripts
+!scripts/
+!scripts/**/
+
 ## Allow packages
-!fxmap
+!fxmap/
+!fxmap/**/
