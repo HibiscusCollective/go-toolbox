@@ -1,0 +1,41 @@
+assert_lefthook_installed: true
+extends:
+  - "**/.lefthook.yml"
+
+pre-commit:
+  piped: true
+  jobs:
+    - name: "Generate project lefthook config"
+      run: "lefthook generate"
+    - name: "Ensure tools are available"
+      id: ensure_tools
+      group:
+        piped: true
+        jobs:
+          - name: "Ensure mise is installed"
+            run: "mise version"
+            fail_text: "Please install mise from mise.jdx.dev"
+          - name: "Ensure tools are installed"
+            run: "mise install"
+    - name: "Tidy subproject dependencies"
+      id: tidy_subprojects
+      group:
+        parallel: true
+    - name: "Run linters & formatters"
+      id: group_linters_formatters
+      group:
+        piped: true
+        jobs:
+          - name: "Format go files"
+            id: format_go
+            stage_fixed: true
+            glob: "**/*.go"
+            run: gofmt -w {staged_files}
+          - name: "Format subprojects"
+            id: format_subprojects
+            group:
+              parallel: true
+          - name: "Lint subprojects"
+            id: lint_subprojects
+            group:
+              parallel: true

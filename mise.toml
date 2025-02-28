@@ -2,6 +2,7 @@
 go = "1.24.0"
 lefthook = "1.11.2"
 revive = "1.7.0"
+staticcheck = "2025.1"
 
 [task_config]
 includes = ["fxmap/.tasks.toml"]

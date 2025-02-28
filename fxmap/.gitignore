@@ -1,9 +1,0 @@
-# Task file
-!.tasks.toml
-
-# Benchmark tests
-!bench
-
-# Packages
-!pkg
-!pkg/*/
