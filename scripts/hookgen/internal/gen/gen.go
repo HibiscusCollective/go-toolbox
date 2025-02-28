@@ -7,6 +7,11 @@ import (
 	"io"
 )
 
+const (
+	errParseProjectConfigMsg = "failed to parse project config: "
+	errExecuteTemplateMsg    = "failed to execute template: "
+)
+
 // Executer represents an object that can write a template to an io.Write
 type Executer interface {
 	Execute(io.Writer, any) error
@@ -41,8 +46,12 @@ func (g Generator) ProjectHooks(w io.Writer, r io.Reader) error {
 	var cfg ProjectConfig
 
 	if err := json.NewDecoder(r).Decode(&cfg); err != nil {
-		return fmt.Errorf("failed to parse project config: %w", err)
+		return fmt.Errorf("%s: %w", errParseProjectConfigMsg, err)
 	}
 
-	return g.tmpl.Execute(w, cfg)
+	if err := g.tmpl.Execute(w, cfg); err != nil {
+		return fmt.Errorf("%s: %w", errExecuteTemplateMsg, err)
+	}
+
+	return nil
 }
