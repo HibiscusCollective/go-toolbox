@@ -6,10 +6,16 @@ import (
 )
 
 // Project contains the configuration to generate hook config files for a project
-type Project struct {
-	Name      string
-	Path      string
-	Templates []string
+type Project interface {
+	Name() string
+	Path() string
+	Templates() []string
+}
+
+type project struct {
+	name      string
+	path      string
+	templates []string
 }
 
 // NewProject creates a new project configuration
@@ -17,34 +23,46 @@ func NewProject(name, path string, template string, moreTemplates ...string) (Pr
 	templates := make([]string, 1, len(moreTemplates)+1)
 	templates[0] = template
 
-	p := Project{
-		Name: name,
-		Path: path,
-		Templates: slices.DeleteFunc(
+	p := project{
+		name: name,
+		path: path,
+		templates: slices.DeleteFunc(
 			append(templates, moreTemplates...),
 			isEmpty,
 		),
 	}
 
 	if err := p.validate(); err != nil {
-		return Project{}, err
+		return nil, err
 	}
 
 	return p, nil
 }
 
-func (p *Project) validate() error {
+func (p project) Name() string {
+	return p.name
+}
+
+func (p project) Path() string {
+	return p.path
+}
+
+func (p project) Templates() []string {
+	return p.templates
+}
+
+func (p project) validate() error {
 	errs := FieldErrors{}
 
-	if p.Name == "" {
+	if p.name == "" {
 		errs["Name"] = errors.New("name field must not be empty")
 	}
 
-	if p.Path == "" {
+	if p.path == "" {
 		errs["Path"] = errors.New("path field must not be empty")
 	}
 
-	if len(p.Templates) == 0 {
+	if len(p.templates) == 0 {
 		errs["Templates"] = errors.New("templates field must not be empty")
 	}
 

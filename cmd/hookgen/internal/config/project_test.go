@@ -28,17 +28,15 @@ func TestProject(t *testing.T) {
 			project, err := config.NewProject("test_project", "test", "template1", "template2")
 
 			g.Expect(err).To(gomega.BeNil())
-			g.Expect(project).To(gomega.Equal(config.Project{
-				Name:      "test_project",
-				Path:      "test",
-				Templates: []string{"template1", "template2"},
-			}))
+			g.Expect(project.Name()).To(gomega.Equal("test_project"))
+			g.Expect(project.Path()).To(gomega.Equal("test"))
+			g.Expect(project.Templates()).To(gomega.Equal([]string{"template1", "template2"}))
 		},
 		"should filter out empty strings from the templates list": func(g gomega.Gomega) {
 			project, err := config.NewProject("test_project", "test", "template1", "", "template2")
 
 			g.Expect(err).To(gomega.BeNil())
-			g.Expect(project.Templates).To(gomega.Equal([]string{"template1", "template2"}))
+			g.Expect(project.Templates()).To(gomega.Equal([]string{"template1", "template2"}))
 		},
 		"should return an error if the templates list is filtered to empty": func(g gomega.Gomega) {
 			project, err := config.NewProject("test_project", "test", "", "")
