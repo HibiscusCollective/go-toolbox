@@ -38,10 +38,10 @@
 ## Allow go tool managment
 !.tools
 
-## Allow scripts
-!scripts/
-!scripts/**/
+## Allow commandline tools
+!cmd/
+!cmd/**/
 
 ## Allow packages
-!fxmap/
-!fxmap/**/
+!pkg/
+!pkg/**/
