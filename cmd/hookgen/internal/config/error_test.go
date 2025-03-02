@@ -1,6 +1,7 @@
 package config_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/onsi/gomega"
@@ -16,6 +17,17 @@ func TestInvalidFieldsError(t *testing.T) {
 			err := config.FieldErrors{}.IntoError()
 
 			g.Expect(err).To(gomega.BeNil())
+		},
+		"should return an error if the fields are not empty": func(g gomega.Gomega) {
+			err := config.FieldErrors{
+				"Name": errors.New("name field must not be empty"),
+			}.IntoError()
+
+			g.Expect(err).To(gomega.Not(gomega.BeNil()))
+			g.Expect(err.Error()).To(gomega.Equal("invalid field(s)"))
+			g.Expect(err.Fields()).To(gomega.Equal(config.FieldErrors{
+				"Name": errors.New("name field must not be empty"),
+			}))
 		},
 	}
 

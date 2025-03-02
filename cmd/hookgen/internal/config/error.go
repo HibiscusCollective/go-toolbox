@@ -11,8 +11,13 @@ type InvalidFieldsError interface {
 
 type invalidFieldsError FieldErrors
 
+// IntoError converts a FieldErrors into an InvalidFieldsError
 func (f FieldErrors) IntoError() InvalidFieldsError {
-	return nil
+	if f == nil || len(f) == 0 {
+		return nil
+	}
+
+	return invalidFieldsError(f)
 }
 
 // Error returns the error message
