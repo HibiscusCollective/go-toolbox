@@ -34,6 +34,13 @@ func TestGenerateFromTemplate(t *testing.T) {
 
 			g.Expect(err).To(gomega.MatchError(gomega.MatchRegexp("^" + gen.ErrExecuteTemplateMsg)))
 		},
+		"should fail to generate a lefthook config file when the ProjectConfig object is incomplete": func(g gomega.Gomega) {
+			var got strings.Builder
+
+			err := gen.New().ProjectHooks(&got, strings.NewReader(`{"name": "Test Project"}`))
+
+			g.Expect(err).To(gomega.MatchError(gomega.MatchRegexp("^" + gen.ErrParseProjectConfigMsg)))
+		},
 		"should generate a valid lefthook config file from template": func(g gomega.Gomega) {
 			var got strings.Builder
 

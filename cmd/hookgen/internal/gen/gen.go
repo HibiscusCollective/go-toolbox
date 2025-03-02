@@ -17,12 +17,6 @@ type Executer interface {
 	Execute(io.Writer, any) error
 }
 
-// ProjectConfig is the configuration for a project
-type ProjectConfig struct {
-	Name string `json:"name"`
-	Path string `json:"path"`
-}
-
 // Generator generates a lefthook config file
 type Generator struct {
 	tmpl Executer
