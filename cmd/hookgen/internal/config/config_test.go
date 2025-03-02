@@ -15,7 +15,7 @@ func TestConfig(t *testing.T) {
 
 	scns := map[string]func(g gomega.Gomega){
 		"should return an error if the fields are empty": func(g gomega.Gomega) {
-			cfg, err := config.CreateConfig(nil)
+			cfg, err := config.Create(nil)
 
 			g.Expect(cfg).To(gomega.BeZero())
 			g.Expect(err).To(gomega.MatchError(config.FieldErrors{
@@ -23,45 +23,45 @@ func TestConfig(t *testing.T) {
 			}.IntoError()))
 		},
 		"should return a valid config": func(g gomega.Gomega) {
-			cfg, err := config.CreateConfig(
-				must.OrPanic(config.NewProject("test", "test", "template")),
-				must.OrPanic(config.NewProject("test2", "test2", "template2")),
+			cfg, err := config.Create(
+				must.OrPanic(config.CreateProject("test", "test", "template")),
+				must.OrPanic(config.CreateProject("test2", "test2", "template2")),
 			)
 
 			g.Expect(err).To(gomega.BeNil())
 			g.Expect(cfg.Projects()).To(gomega.Equal([]config.Project{
-				must.OrPanic(config.NewProject("test", "test", "template")),
-				must.OrPanic(config.NewProject("test2", "test2", "template2")),
+				must.OrPanic(config.CreateProject("test", "test", "template")),
+				must.OrPanic(config.CreateProject("test2", "test2", "template2")),
 			}))
 		},
 		"should filter out empty projects from the config": func(g gomega.Gomega) {
-			cfg, err := config.CreateConfig(
-				must.OrPanic(config.NewProject("test", "test", "template")),
+			cfg, err := config.Create(
+				must.OrPanic(config.CreateProject("test", "test", "template")),
 				config.ZeroProject(),
-				must.OrPanic(config.NewProject("test2", "test2", "template2")),
+				must.OrPanic(config.CreateProject("test2", "test2", "template2")),
 			)
 
 			g.Expect(err).To(gomega.BeNil())
 			g.Expect(cfg.Projects()).To(gomega.Equal([]config.Project{
-				must.OrPanic(config.NewProject("test", "test", "template")),
-				must.OrPanic(config.NewProject("test2", "test2", "template2")),
+				must.OrPanic(config.CreateProject("test", "test", "template")),
+				must.OrPanic(config.CreateProject("test2", "test2", "template2")),
 			}))
 		},
 		"should filter out nil projects from the config": func(g gomega.Gomega) {
-			cfg, err := config.CreateConfig(
-				must.OrPanic(config.NewProject("test", "test", "template")),
+			cfg, err := config.Create(
+				must.OrPanic(config.CreateProject("test", "test", "template")),
 				nil,
-				must.OrPanic(config.NewProject("test2", "test2", "template2")),
+				must.OrPanic(config.CreateProject("test2", "test2", "template2")),
 			)
 
 			g.Expect(err).To(gomega.BeNil())
 			g.Expect(cfg.Projects()).To(gomega.Equal([]config.Project{
-				must.OrPanic(config.NewProject("test", "test", "template")),
-				must.OrPanic(config.NewProject("test2", "test2", "template2")),
+				must.OrPanic(config.CreateProject("test", "test", "template")),
+				must.OrPanic(config.CreateProject("test2", "test2", "template2")),
 			}))
 		},
 		"should return an error if the projects list is filtered to empty": func(g gomega.Gomega) {
-			cfg, err := config.CreateConfig(
+			cfg, err := config.Create(
 				nil,
 				config.ZeroProject(),
 			)

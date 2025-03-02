@@ -18,8 +18,8 @@ func (c config) Projects() []Project {
 	return []Project(c)
 }
 
-// CreateConfig creates a new config
-func CreateConfig(project Project, moreProjects ...Project) (Config, error) {
+// Create creates a new config
+func Create(project Project, moreProjects ...Project) (Config, error) {
 	projects := make([]Project, 1, len(moreProjects)+1)
 	projects[0] = project
 	projects = append(projects, moreProjects...)

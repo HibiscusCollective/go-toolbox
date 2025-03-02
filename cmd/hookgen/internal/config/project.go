@@ -18,8 +18,8 @@ type project struct {
 	templates []string
 }
 
-// NewProject creates a new project configuration
-func NewProject(name, path string, template string, moreTemplates ...string) (Project, error) {
+// CreateProject creates a new project configuration
+func CreateProject(name, path string, template string, moreTemplates ...string) (Project, error) {
 	templates := make([]string, 1, len(moreTemplates)+1)
 	templates[0] = template
 
