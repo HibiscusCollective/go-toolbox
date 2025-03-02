@@ -1,6 +1,7 @@
 package must_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/onsi/gomega"
@@ -16,6 +17,11 @@ func TestMustOrPanic(t *testing.T) {
 			val := must.OrPanic(valOrErr("hello, world!", nil))
 
 			g.Expect(val).To(gomega.Equal("hello, world!"))
+		},
+		"should panic given a non-nil error": func(g gomega.Gomega) {
+			g.Expect(func() {
+				must.OrPanic(valOrErr(nil, errors.New("boom")))
+			}).To(gomega.Panic())
 		},
 	}
 
