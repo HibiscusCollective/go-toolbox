@@ -60,6 +60,17 @@ func TestConfig(t *testing.T) {
 				must.OrPanic(config.NewProject("test2", "test2", "template2")),
 			}))
 		},
+		"should return an error if the projects list is filtered to empty": func(g gomega.Gomega) {
+			cfg, err := config.CreateConfig(
+				nil,
+				config.ZeroProject(),
+			)
+
+			g.Expect(cfg).To(gomega.BeZero())
+			g.Expect(err).To(gomega.MatchError(config.FieldErrors{
+				"Projects": errors.New("projects field must not be empty"),
+			}.IntoError()))
+		},
 	}
 
 	for name, test := range scns {
