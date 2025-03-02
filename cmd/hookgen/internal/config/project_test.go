@@ -1,0 +1,36 @@
+package config_test
+
+import (
+	"errors"
+	"testing"
+
+	"github.com/onsi/gomega"
+
+	"github.com/HibiscusCollective/go-toolbox/cmd/hookgen/internal/config"
+)
+
+func TestProject(t *testing.T) {
+	t.Parallel()
+
+	scns := map[string]func(g gomega.Gomega){
+		"should return an error constructing an empty project": func(g gomega.Gomega) {
+			project, err := config.NewProject("", "", "")
+
+			g.Expect(project).To(gomega.BeZero())
+
+			g.Expect(err).To(gomega.MatchError(config.FieldErrors{
+				"Name":      errors.New("name field must not be empty"),
+				"Path":      errors.New("path field must not be empty"),
+				"Templates": errors.New("templates field must not be empty"),
+			}.IntoError()))
+		},
+	}
+
+	for name, test := range scns {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			test(gomega.NewWithT(t))
+		})
+	}
+}
