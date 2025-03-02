@@ -1,6 +1,9 @@
 package config
 
-import "errors"
+import (
+	"errors"
+	"slices"
+)
 
 // Project contains the configuration to generate hook config files for a project
 type Project struct {
@@ -10,14 +13,21 @@ type Project struct {
 }
 
 // NewProject creates a new project configuration
-func NewProject(_, _ string, _ string, _ ...string) (Project, error) {
+func NewProject(name, path string, template string, moreTemplates ...string) (Project, error) {
+	templates := make([]string, 1, len(moreTemplates)+1)
+	templates[0] = template
+
 	p := Project{
-		Name:      "",
-		Path:      "",
-		Templates: nil,
+		Name:      name,
+		Path:      path,
+		Templates: append(templates, moreTemplates...),
 	}
 
-	return p, p.validate()
+	if err := p.validate(); err != nil {
+		return Project{}, err
+	}
+
+	return p, nil
 }
 
 func (p *Project) validate() error {
@@ -31,7 +41,7 @@ func (p *Project) validate() error {
 		errs["Path"] = errors.New("path field must not be empty")
 	}
 
-	if len(p.Templates) == 0 {
+	if len(p.Templates) == 0 || slices.ContainsFunc(p.Templates, func(t string) bool { return t == "" }) {
 		errs["Templates"] = errors.New("templates field must not be empty")
 	}
 

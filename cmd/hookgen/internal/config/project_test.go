@@ -24,6 +24,16 @@ func TestProject(t *testing.T) {
 				"Templates": errors.New("templates field must not be empty"),
 			}.IntoError()))
 		},
+		"should return a valid project": func(g gomega.Gomega) {
+			project, err := config.NewProject("test_project", "test", "template1", "template2")
+
+			g.Expect(err).To(gomega.BeNil())
+			g.Expect(project).To(gomega.Equal(config.Project{
+				Name:      "test_project",
+				Path:      "test",
+				Templates: []string{"template1", "template2"},
+			}))
+		},
 	}
 
 	for name, test := range scns {
