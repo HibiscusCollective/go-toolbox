@@ -7,6 +7,7 @@ import (
 	"github.com/onsi/gomega"
 
 	"github.com/HibiscusCollective/go-toolbox/cmd/hookgen/internal/config"
+	"github.com/HibiscusCollective/go-toolbox/pkg/must"
 )
 
 func TestConfig(t *testing.T) {
@@ -14,7 +15,7 @@ func TestConfig(t *testing.T) {
 
 	scns := map[string]func(g gomega.Gomega){
 		"should return an error if the fields are empty": func(g gomega.Gomega) {
-			cfg, err := config.CreateConfig()
+			cfg, err := config.CreateConfig(nil)
 
 			g.Expect(cfg).To(gomega.BeZero())
 			g.Expect(err).To(gomega.MatchError(config.FieldErrors{
@@ -23,9 +24,15 @@ func TestConfig(t *testing.T) {
 		},
 		"should return a valid config": func(g gomega.Gomega) {
 			cfg, err := config.CreateConfig(
-				config.NewProject("test", "test", "template"),
-				config.NewProject("test2", "test2", "template2"),
+				must.OrPanic(config.NewProject("test", "test", "template")),
+				must.OrPanic(config.NewProject("test2", "test2", "template2")),
 			)
+
+			g.Expect(err).To(gomega.BeNil())
+			g.Expect(cfg.Projects()).To(gomega.Equal([]config.Project{
+				must.OrPanic(config.NewProject("test", "test", "template")),
+				must.OrPanic(config.NewProject("test2", "test2", "template2")),
+			}))
 		},
 	}
 
