@@ -12,7 +12,7 @@ func (c config) Projects() []Project {
 	panic("unimplemented")
 }
 
-// NewConfig creates a new config
-func NewConfig(projects ...Project) (Config, error) {
+// CreateConfig creates a new config
+func CreateConfig(projects ...Project) (Config, error) {
 	return nil, nil
 }
