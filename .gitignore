@@ -31,5 +31,10 @@
 !**/go.sum
 !**/*.go
 
+## Allow commandline tools
+!cmd/
+!cmd/**/
+
 ## Allow packages
-!fxmap
+!pkg/
+!pkg/**/
