@@ -34,6 +34,12 @@ func TestProject(t *testing.T) {
 				Templates: []string{"template1", "template2"},
 			}))
 		},
+		"should filter out empty strings from the templates list": func(g gomega.Gomega) {
+			project, err := config.NewProject("test_project", "test", "template1", "", "template2")
+
+			g.Expect(err).To(gomega.BeNil())
+			g.Expect(project.Templates).To(gomega.Equal([]string{"template1", "template2"}))
+		},
 	}
 
 	for name, test := range scns {

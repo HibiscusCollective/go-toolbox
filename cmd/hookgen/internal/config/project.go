@@ -18,9 +18,12 @@ func NewProject(name, path string, template string, moreTemplates ...string) (Pr
 	templates[0] = template
 
 	p := Project{
-		Name:      name,
-		Path:      path,
-		Templates: append(templates, moreTemplates...),
+		Name: name,
+		Path: path,
+		Templates: slices.DeleteFunc(
+			append(templates, moreTemplates...),
+			isEmpty,
+		),
 	}
 
 	if err := p.validate(); err != nil {
@@ -47,3 +50,5 @@ func (p *Project) validate() error {
 
 	return errs.IntoError()
 }
+
+func isEmpty(t string) bool { return t == "" }
