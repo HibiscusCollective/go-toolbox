@@ -28,7 +28,7 @@ func NewProject(name, path string, template string, moreTemplates ...string) (Pr
 		path: path,
 		templates: slices.DeleteFunc(
 			append(templates, moreTemplates...),
-			isEmpty,
+			isEmptyString,
 		),
 	}
 
@@ -69,4 +69,8 @@ func (p project) validate() error {
 	return errs.IntoError()
 }
 
-func isEmpty(t string) bool { return t == "" }
+func isNilOrZero(p Project) bool {
+	return p == nil || len(p.Templates()) == 0
+}
+
+func isEmptyString(t string) bool { return t == "" }

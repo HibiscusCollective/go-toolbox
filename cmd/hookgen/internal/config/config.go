@@ -1,7 +1,10 @@
 // Package config implements configuration parsing for the generator
 package config
 
-import "errors"
+import (
+	"errors"
+	"slices"
+)
 
 // Config contains the configuration for the generator
 type Config interface {
@@ -17,17 +20,16 @@ func (c config) Projects() []Project {
 
 // CreateConfig creates a new config
 func CreateConfig(project Project, moreProjects ...Project) (Config, error) {
-	if project == nil {
+	projects := make([]Project, 1, len(moreProjects)+1)
+	projects[0] = project
+	projects = append(projects, moreProjects...)
+
+	projects = slices.DeleteFunc(projects, isNilOrZero)
+
+	if len(projects) == 0 {
 		return nil, FieldErrors{
 			"Projects": errors.New("projects field must not be empty"),
 		}.IntoError()
-	}
-
-	projects := make([]Project, 1, len(moreProjects)+1)
-	projects[0] = project
-
-	if len(moreProjects) > 0 {
-		projects = append(projects, moreProjects...)
 	}
 
 	return config(projects), nil

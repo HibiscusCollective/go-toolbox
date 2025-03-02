@@ -34,6 +34,32 @@ func TestConfig(t *testing.T) {
 				must.OrPanic(config.NewProject("test2", "test2", "template2")),
 			}))
 		},
+		"should filter out empty projects from the config": func(g gomega.Gomega) {
+			cfg, err := config.CreateConfig(
+				must.OrPanic(config.NewProject("test", "test", "template")),
+				config.ZeroProject(),
+				must.OrPanic(config.NewProject("test2", "test2", "template2")),
+			)
+
+			g.Expect(err).To(gomega.BeNil())
+			g.Expect(cfg.Projects()).To(gomega.Equal([]config.Project{
+				must.OrPanic(config.NewProject("test", "test", "template")),
+				must.OrPanic(config.NewProject("test2", "test2", "template2")),
+			}))
+		},
+		"should filter out nil projects from the config": func(g gomega.Gomega) {
+			cfg, err := config.CreateConfig(
+				must.OrPanic(config.NewProject("test", "test", "template")),
+				nil,
+				must.OrPanic(config.NewProject("test2", "test2", "template2")),
+			)
+
+			g.Expect(err).To(gomega.BeNil())
+			g.Expect(cfg.Projects()).To(gomega.Equal([]config.Project{
+				must.OrPanic(config.NewProject("test", "test", "template")),
+				must.OrPanic(config.NewProject("test2", "test2", "template2")),
+			}))
+		},
 	}
 
 	for name, test := range scns {
