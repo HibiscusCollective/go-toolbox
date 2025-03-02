@@ -44,7 +44,7 @@ func (p *Project) validate() error {
 		errs["Path"] = errors.New("path field must not be empty")
 	}
 
-	if len(p.Templates) == 0 || slices.ContainsFunc(p.Templates, func(t string) bool { return t == "" }) {
+	if len(p.Templates) == 0 {
 		errs["Templates"] = errors.New("templates field must not be empty")
 	}
 

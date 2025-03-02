@@ -40,6 +40,14 @@ func TestProject(t *testing.T) {
 			g.Expect(err).To(gomega.BeNil())
 			g.Expect(project.Templates).To(gomega.Equal([]string{"template1", "template2"}))
 		},
+		"should return an error if the templates list is filtered to empty": func(g gomega.Gomega) {
+			project, err := config.NewProject("test_project", "test", "", "")
+
+			g.Expect(project).To(gomega.BeZero())
+			g.Expect(err).To(gomega.MatchError(config.FieldErrors{
+				"Templates": errors.New("templates field must not be empty"),
+			}.IntoError()))
+		},
 	}
 
 	for name, test := range scns {
