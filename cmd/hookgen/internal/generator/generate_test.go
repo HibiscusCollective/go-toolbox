@@ -13,6 +13,7 @@ import (
 
 	"github.com/HibiscusCollective/go-toolbox/cmd/hookgen/internal/config"
 	"github.com/HibiscusCollective/go-toolbox/cmd/hookgen/internal/generator"
+	"github.com/HibiscusCollective/go-toolbox/pkg/must"
 )
 
 //go:embed testdata/*
@@ -31,18 +32,29 @@ func TestGenerator(t *testing.T) {
 
 	const errMsg = "failed to generate hook configurations"
 
-	scns := map[string]func(g gomega.Gomega){
-		"should return an error if the config is nil": func(g gomega.Gomega) {
+	scns := map[string]func(t testing.TB, g gomega.Gomega){
+		"should return an error if the config is nil": func(t testing.TB, g gomega.Gomega) {
 			gen, err := generator.Create(stubReader{}, stubWriter{}, stubEngine{})
 			g.Expect(err).To(gomega.BeNil())
-			g.Expect(gen).To(gomega.Not(gomega.BeNil()))
 
 			err = gen.Generate(nil)
 
-			g.Expect(err).To(gomega.MatchError(fmt.Errorf("%s: %w", errMsg, generator.ParameterErrors{
-				"cwd":    errors.New("cwd argument is required"),
-				"config": errors.New("config argument is required"),
-			}.IntoError())))
+			g.Expect(err).To(gomega.MatchError(fmt.Errorf("%s: %w", errMsg, generator.MissingParametersError("config"))))
+		},
+		"should return an error if the template execution fails": func(t testing.TB, g gomega.Gomega) {
+			gen, err := generator.Create(stubReader{}, stubWriter{}, stubEngine{err: errors.New("boom")})
+			g.Expect(err).To(gomega.BeNil())
+			g.Expect(gen).To(gomega.Not(gomega.BeNil()))
+
+			project := must.Succeed(config.CreateProject("test project 1", "test/project1", "test.tmpl")).OrFail(t)
+
+			err = gen.Generate(must.Succeed(config.Create(project)).OrFail(t))
+
+			g.Expect(err).To(gomega.MatchError(fmt.Errorf(
+				"%s: %w",
+				errMsg,
+				generator.TemplateExecutionError(errors.New("boom"), "test.tmpl", project),
+			)))
 		},
 	}
 
@@ -50,7 +62,7 @@ func TestGenerator(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			test(gomega.NewWithT(t))
+			test(t, gomega.NewWithT(t))
 		})
 	}
 }
@@ -68,5 +80,5 @@ func (s stubWriter) WriteFile(path string) (io.WriteCloser, error) {
 }
 
 func (s stubEngine) Apply(template string, data config.Project) (string, error) {
-	panic("unimplemented")
+	return "", s.err
 }

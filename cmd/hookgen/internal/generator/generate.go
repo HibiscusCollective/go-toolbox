@@ -54,11 +54,11 @@ func (g TemplateGenerator) Generate(config config.Config) error {
 }
 
 func validateArgs(config config.Config) error {
-	errs := ParameterErrors{}
+	var errs []error
 
 	if config == nil || len(config.Projects()) == 0 {
-		errs["config"] = errors.New("config argument is required")
+		errs = append(errs, fmt.Errorf("config argument is required"))
 	}
 
-	return errs.IntoError()
+	return errors.Join(errs...)
 }

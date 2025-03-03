@@ -1,31 +1,92 @@
 package generator
 
-// ParameterErrors is a map of fields and their errors
-type ParameterErrors map[string]error
+import (
+	"errors"
+	"fmt"
 
-// InvalidParametersError is an error that contains a map of fields and their errors
-type InvalidParametersError interface {
+	"github.com/HibiscusCollective/go-toolbox/cmd/hookgen/internal/config"
+)
+
+// ParameterError is an error that contains a map of fields and their errors
+type ParameterError interface {
 	error
-	Parameters() ParameterErrors
+	Parameter() string
 }
 
-type invalidParametersError ParameterErrors
+type parameterError struct {
+	Msg   string
+	Label string
+}
 
-// IntoError converts a ParameterErrors into an InvalidParametersError
-func (f ParameterErrors) IntoError() InvalidParametersError {
-	if f == nil || len(f) == 0 {
+// MissingParametersError returns a list of missing parameter errors
+func MissingParametersError(name string, moreNames ...string) error {
+	errs := make([]error, 0, len(moreNames)+1)
+	for _, name := range append([]string{name}, moreNames...) {
+		if name == "" {
+			continue
+		}
+
+		errs = append(errs, parameterError{
+			Msg:   fmt.Sprintf("missing required parameter: %s", name),
+			Label: name,
+		})
+	}
+
+	if len(errs) == 0 {
 		return nil
 	}
 
-	return invalidParametersError(f)
+	return errors.Join(errs...)
 }
 
-// Error returns the error message
-func (f invalidParametersError) Error() string {
-	return "invalid parameter(s)"
+func (p parameterError) Error() string {
+	return p.Msg
 }
 
-// Parameters gets the parameters that are in an invalid state
-func (f invalidParametersError) Parameters() ParameterErrors {
-	return ParameterErrors(f)
+func (p parameterError) Parameter() string {
+	return p.Label
+}
+
+// TemplateError is an error that contains the template and the data
+type TemplateError interface {
+	error
+	Unwrap() error
+
+	Template() string
+	Data() config.Project
+}
+
+type templateError struct {
+	template string
+	data     config.Project
+	err      error
+}
+
+// TemplateExecutionError returns an error that contains the template and the data
+func TemplateExecutionError(err error, template string, data config.Project) TemplateError {
+	if err == nil {
+		return nil
+	}
+
+	return templateError{
+		template: template,
+		data:     data,
+		err:      err,
+	}
+}
+
+func (t templateError) Error() string {
+	return "error applying template(s)"
+}
+
+func (t templateError) Unwrap() error {
+	return t.err
+}
+
+func (t templateError) Template() string {
+	return t.template
+}
+
+func (t templateError) Data() config.Project {
+	return t.data
 }
