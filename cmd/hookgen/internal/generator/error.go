@@ -1,4 +1,4 @@
-package gen
+package generator
 
 // ParameterErrors is a map of fields and their errors
 type ParameterErrors map[string]error
