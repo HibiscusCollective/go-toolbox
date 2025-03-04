@@ -5,19 +5,16 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"path"
 
 	"github.com/HibiscusCollective/go-toolbox/cmd/hookgen/internal/config"
+	"github.com/HibiscusCollective/go-toolbox/cmd/hookgen/internal/filesys"
 )
 
-// FileSystemReader is an interface that defines the logic for listing files and reading a file
-type FileSystemReader interface {
-	ListFiles(path string) ([]string, error)
-	ReadFile(path string) (io.ReadCloser, error)
-}
-
-// FileSystemWriter is an interface that defines the logic for writing a file
-type FileSystemWriter interface {
-	WriteFile(path string) (io.WriteCloser, error)
+// FSCreator is an interface that defines the logic for creating a writeable file and for creating a directory
+type FSCreator interface {
+	filesys.FileCreator
+	filesys.DirMaker
 }
 
 // TemplateEngine is an interface that defines the logic for applying some data to a template to generate a file
@@ -27,18 +24,16 @@ type TemplateEngine interface {
 
 // TemplateGenerator is a struct that encapsulates the logic for generating hook config files using a template engine
 type TemplateGenerator struct {
-	reader FileSystemReader
-	writer FileSystemWriter
+	fsc    FSCreator
 	engine TemplateEngine
 }
 
 // Create creates a new TemplateGenerator
-func Create(reader FileSystemReader, writer FileSystemWriter, engine TemplateEngine) (TemplateGenerator, error) {
+func Create(fsc FSCreator, engine TemplateEngine) (TemplateGenerator, error) {
 	// TODO: Validate not nil
 
 	return TemplateGenerator{
-		reader: reader,
-		writer: writer,
+		fsc:    fsc,
 		engine: engine,
 	}, nil
 }
@@ -51,13 +46,7 @@ func (g TemplateGenerator) Generate(config config.Config) error {
 		return fmt.Errorf("%s: %w", errMsg, MissingParametersError("config"))
 	}
 
-	var errs error
-	for _, project := range config.Projects() {
-		err := g.generateProjectHookFiles(project)
-
-		errs = errors.Join(errs, err)
-	}
-
+	errs := g.generateAllProjectHooks(config.Projects()...)
 	if errs != nil {
 		return fmt.Errorf("%s: %w", errMsg, errs)
 	}
@@ -65,12 +54,42 @@ func (g TemplateGenerator) Generate(config config.Config) error {
 	return nil
 }
 
+func (g TemplateGenerator) generateAllProjectHooks(project ...config.Project) error {
+	var errs error
+
+	for _, project := range project {
+		if err := g.fsc.MkdirAll(path.Dir(project.Path())); err != nil {
+			// errs = errors.Join(errs, err)
+			panic(err) // TODO: Handle this better
+		}
+
+		if err := g.generateProjectHookFiles(project); err != nil {
+			genErrs := err.(interface{ Unwrap() []error }).Unwrap()
+			for _, err := range genErrs {
+				errs = errors.Join(errs, err)
+			}
+		}
+	}
+
+	return errs
+}
+
 func (g TemplateGenerator) generateProjectHookFiles(project config.Project) error {
 	var errs error
-	for _, template := range project.Templates() {
-		err := g.engine.Apply(io.Discard, template, project)
 
-		errs = errors.Join(errs, TemplateExecutionError(err, template, project))
+	for _, template := range project.Templates() {
+		filename := path.Base(template)
+		filename = string([]rune(filename)[:len(filename)-len(path.Ext(filename))])
+
+		f, err := g.fsc.Create(path.Join(project.Path(), filename))
+		if err != nil {
+			// errs = errors.Join(errs, err)
+			panic(err) // TODO: Handle this better
+		}
+
+		if err := g.engine.Apply(f, template, project); err != nil {
+			errs = errors.Join(errs, TemplateExecutionError(err, template, project))
+		}
 	}
 
 	return errs
