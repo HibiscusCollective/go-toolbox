@@ -30,12 +30,16 @@ type TemplateGenerator struct {
 
 // Create creates a new TemplateGenerator
 func Create(fsc FSCreator, engine TemplateEngine) (TemplateGenerator, error) {
-	// TODO: Validate not nil
-
-	return TemplateGenerator{
+	gen := TemplateGenerator{
 		fsc:    fsc,
 		engine: engine,
-	}, nil
+	}
+
+	if err := gen.validate(); err != nil {
+		return TemplateGenerator{}, err
+	}
+
+	return gen, nil
 }
 
 // Generate generates the hook config files for the given projects
@@ -93,4 +97,22 @@ func (g TemplateGenerator) generateProjectHookFiles(project config.Project) erro
 	}
 
 	return errs
+}
+
+func (g TemplateGenerator) validate() error {
+	missing := make([]string, 0, 2)
+
+	if g.fsc == nil {
+		missing = append(missing, "fsc")
+	}
+
+	if g.engine == nil {
+		missing = append(missing, "engine")
+	}
+
+	if len(missing) > 0 {
+		return MissingParametersError(missing[0], missing[1:]...)
+	}
+
+	return nil
 }

@@ -27,6 +27,11 @@ func TestGenerator(t *testing.T) {
 	const errMsg = "failed to generate hook configurations"
 
 	scns := map[string]func(t testing.TB, g gomega.Gomega){
+		"should return an error if the generator is created with nil dependencies": func(t testing.TB, g gomega.Gomega) {
+			_, err := generator.Create(nil, nil)
+			g.Expect(err).To(gomega.MatchError(generator.MissingParametersError("fsc", "engine")))
+
+		},
 		"should return an error if the config is nil": func(t testing.TB, g gomega.Gomega) {
 			gen, err := generator.Create(filesys.New(afero.NewMemMapFs()), fakeEngine{})
 			g.Expect(err).To(gomega.BeNil())
