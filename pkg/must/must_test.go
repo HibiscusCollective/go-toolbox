@@ -40,13 +40,13 @@ func TestOrFail(t *testing.T) {
 
 	scns := map[string]func(t testing.TB, g gomega.Gomega){
 		"should not fail given a nil error": func(t testing.TB, g gomega.Gomega) {
-			val := must.Succeed(valOrErr("hello, world!", nil)).OrFail(t)
+			val := must.Succeed(valOrErr("hello, world!", nil)).OrFailTest(t)
 
 			g.Expect(val).To(gomega.Equal("hello, world!"))
 		},
 		"should fail given a non-nil error": func(t testing.TB, g gomega.Gomega) {
 			tester := mockT(t)
-			must.Succeed(valOrErr(nil, errors.New("boom"))).OrFail(tester)
+			must.Succeed(valOrErr(nil, errors.New("boom"))).OrFailTest(tester)
 
 			g.Expect(tester.fatal).To(gomega.Equal("unexpected error: boom"))
 		},

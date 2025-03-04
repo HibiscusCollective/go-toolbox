@@ -6,7 +6,7 @@ import "testing"
 // Success is an interface that defines the logic for requiring the successful of a function
 type Success[T any] interface {
 	OrPanic() T
-	OrFail(t testing.TB) T
+	OrFailTest(t testing.TB) T
 }
 
 type result[T any] struct {
@@ -32,7 +32,7 @@ func (r result[T]) OrPanic() T {
 }
 
 // OrFail fails the test if the error is not nil
-func (r result[T]) OrFail(t testing.TB) T {
+func (r result[T]) OrFailTest(t testing.TB) T {
 	if r.err != nil {
 		t.Fatalf("unexpected error: %v", r.err)
 	}

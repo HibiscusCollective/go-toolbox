@@ -53,7 +53,7 @@ func TestInvalidParametersError(t *testing.T) {
 				tb.Errorf("error is not a joined error: %v", err)
 			}
 
-			errs := must.Succeed(fxslice.Cast[error, generator.ParameterError](unwrapper.Unwrap())).OrFail(tb)
+			errs := must.Succeed(fxslice.Cast[error, generator.ParameterError](unwrapper.Unwrap())).OrFailTest(tb)
 			g.Expect(errs).To(gomega.HaveLen(1))
 			g.Expect(errs[0].Parameter()).To(gomega.Equal("Name"))
 		},
@@ -78,7 +78,7 @@ func TestTemplateError(t *testing.T) {
 
 	scns := map[string]func(t testing.TB, g gomega.Gomega){
 		"should be nil if the error is nil": func(t testing.TB, g gomega.Gomega) {
-			err := generator.TemplateExecutionError(nil, "test.tmpl", must.Succeed(config.CreateProject("test", "test", "template")).OrFail(t))
+			err := generator.TemplateExecutionError(nil, "test.tmpl", must.Succeed(config.CreateProject("test", "test", "template")).OrFailTest(t))
 			g.Expect(err).To(gomega.BeNil())
 		},
 	}
