@@ -1,25 +1,25 @@
 # Go Toolbox
 
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL_v3-darkgreen.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/HibiscusCollective/go-toolbox/badge)](https://scorecard.dev/viewer/?uri=github.com/HibiscusCollective/go-toolbox)
 
 Go Toolbox is a monorepo collecting various utilities for Go developers.
 
 ## License
 
-The libraries in this project are licensed under the GNU Affero General Public License version 3 or later by default, but individual libraries may be licensed under other compatible licenses. Please ensure you review each package's license information before using or distributing it.
+The libraries in this project are licensed under the GNU Lesser General Public License version 3 or later by default, but individual libraries may be licensed under other compatible licenses. Please ensure you review each package's license information before using or distributing it.
 
 ---
 
 Copyright (C) 2025 Pierre Fouilloux, Hibiscus Collective
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
 without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-See the GNU Affero General Public License for more details.
+See the GNU Lesser General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public License along with this program.  
+You should have received a copy of the GNU Lesser General Public License along with this program.  
 If not, see <https://www.gnu.org/licenses/>.
 
 [Full text of the license](LICENSE)
