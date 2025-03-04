@@ -53,7 +53,7 @@ func TestGenerator(t *testing.T) {
 			g.Expect(err).To(gomega.MatchError(fmt.Errorf(
 				"%s: %w",
 				errMsg,
-				generator.TemplateExecutionError(errors.New("boom"), "test.tmpl", project),
+				errors.Join(nil, generator.TemplateExecutionError(errors.New("boom"), "test.tmpl", project)),
 			)))
 		},
 	}
@@ -79,6 +79,6 @@ func (s stubWriter) WriteFile(path string) (io.WriteCloser, error) {
 	panic("unimplemented")
 }
 
-func (s stubEngine) Apply(template string, data config.Project) (string, error) {
-	return "", s.err
+func (s stubEngine) Apply(w io.Writer, template string, data config.Project) error {
+	return s.err
 }

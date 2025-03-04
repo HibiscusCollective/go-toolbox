@@ -22,7 +22,7 @@ type FileSystemWriter interface {
 
 // TemplateEngine is an interface that defines the logic for applying some data to a template to generate a file
 type TemplateEngine interface {
-	Apply(template string, data config.Project) (string, error)
+	Apply(w io.Writer, template string, data config.Project) error
 }
 
 // TemplateGenerator is a struct that encapsulates the logic for generating hook config files using a template engine
@@ -45,20 +45,33 @@ func Create(reader FileSystemReader, writer FileSystemWriter, engine TemplateEng
 
 // Generate generates the hook config files for the given projects
 func (g TemplateGenerator) Generate(config config.Config) error {
-	err := validateArgs(config)
-	if err != nil {
-		return fmt.Errorf("failed to generate hook configurations: %w", err)
+	const errMsg = "failed to generate hook configurations"
+
+	if config == nil {
+		return fmt.Errorf("%s: %w", errMsg, MissingParametersError("config"))
+	}
+
+	var errs error
+	for _, project := range config.Projects() {
+		err := g.generateProjectHookFiles(project)
+
+		errs = errors.Join(errs, err)
+	}
+
+	if errs != nil {
+		return fmt.Errorf("%s: %w", errMsg, errs)
 	}
 
 	return nil
 }
 
-func validateArgs(config config.Config) error {
-	var errs []error
+func (g TemplateGenerator) generateProjectHookFiles(project config.Project) error {
+	var errs error
+	for _, template := range project.Templates() {
+		err := g.engine.Apply(io.Discard, template, project)
 
-	if config == nil || len(config.Projects()) == 0 {
-		errs = append(errs, fmt.Errorf("config argument is required"))
+		errs = errors.Join(errs, TemplateExecutionError(err, template, project))
 	}
 
-	return errors.Join(errs...)
+	return errs
 }
