@@ -109,7 +109,7 @@ func (ps projects) mustCreateConfig(t testing.TB) config.Config {
 		t.Fatal("unexpected error(s) creating projects: %w", err)
 	}
 
-	return must.Succeed(config.Create(projects[0], projects[1:]...)).OrFailTest(t)
+	return must.GetOrFailTest(t, func() (config.Config, error) { return config.Create(projects[0], projects[1:]...) })
 }
 
 type testFiles map[string]string
@@ -118,18 +118,20 @@ func mustReadFilesInDir(t testing.TB, fs afero.Fs, dir string) testFiles {
 	t.Helper()
 
 	dirFileNames := fxslice.Transform(
-		must.Succeed(afero.ReadDir(fs, dir)).OrFailTest(t),
+		must.GetOrFailTest(t, func() ([]os.FileInfo, error) { return afero.ReadDir(fs, dir) }),
 		func(fi os.FileInfo) string { return fi.Name() },
 	)
 
-	content := must.Succeed(fxslice.TryTransform(dirFileNames, func(fn string) ([]byte, error) {
-		f, err := fs.Open(path.Join(dir, fn))
-		if err != nil {
-			return nil, err
-		}
+	content := must.GetOrFailTest(t, func() ([][]byte, error) {
+		return fxslice.TryTransform(dirFileNames, func(fn string) ([]byte, error) {
+			f, err := fs.Open(path.Join(dir, fn))
+			if err != nil {
+				return nil, err
+			}
 
-		return io.ReadAll(f)
-	})).OrFailTest(t)
+			return io.ReadAll(f)
+		})
+	})
 
 	tfs := make(testFiles, len(dirFileNames))
 	for i, file := range dirFileNames {

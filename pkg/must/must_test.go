@@ -15,13 +15,17 @@ func TestMustOrPanic(t *testing.T) {
 
 	scns := map[string]func(g gomega.Gomega){
 		"should not panic given a nil error": func(g gomega.Gomega) {
-			val := must.Succeed(valOrErr("hello, world!", nil)).OrPanic()
+			val := must.GetOrPanic(func() (string, error) {
+				return "hello, world!", nil
+			})
 
 			g.Expect(val).To(gomega.Equal("hello, world!"))
 		},
 		"should panic given a non-nil error": func(g gomega.Gomega) {
 			g.Expect(func() {
-				must.Succeed(valOrErr(nil, errors.New("boom"))).OrPanic()
+				must.GetOrPanic(func() (string, error) {
+					return "", errors.New("boom")
+				})
 			}).To(gomega.Panic())
 		},
 	}
@@ -35,20 +39,27 @@ func TestMustOrPanic(t *testing.T) {
 	}
 }
 
-func TestOrFail(t *testing.T) {
+func TestMustOrFailTest(t *testing.T) {
 	t.Parallel()
 
 	scns := map[string]func(t testing.TB, g gomega.Gomega){
-		"should not fail given a nil error": func(t testing.TB, g gomega.Gomega) {
-			val := must.Succeed(valOrErr("hello, world!", nil)).OrFailTest(t)
+		"should not fail the test given a nil error": func(t testing.TB, g gomega.Gomega) {
+			mt := mockT(t)
+			val := must.GetOrFailTest(mt, func() (string, error) {
+				return "hello, world!", nil
+			})
 
 			g.Expect(val).To(gomega.Equal("hello, world!"))
+			g.Expect(mt.fatal).To(gomega.BeEmpty())
 		},
-		"should fail given a non-nil error": func(t testing.TB, g gomega.Gomega) {
-			tester := mockT(t)
-			must.Succeed(valOrErr(nil, errors.New("boom"))).OrFailTest(tester)
+		"should fail the test given a non-nil error": func(t testing.TB, g gomega.Gomega) {
+			mt := mockT(t)
+			val := must.GetOrFailTest(mt, func() (string, error) {
+				return "", errors.New("boom")
+			})
 
-			g.Expect(tester.fatal).To(gomega.Equal("unexpected error: boom"))
+			g.Expect(val).To(gomega.Equal(""))
+			g.Expect(mt.fatal).To(gomega.Equal("unexpected error: boom"))
 		},
 	}
 
@@ -64,10 +75,6 @@ func TestOrFail(t *testing.T) {
 type tm struct {
 	testing.TB
 	fatal string
-}
-
-func valOrErr(val any, err error) (any, error) {
-	return val, err
 }
 
 func mockT(t testing.TB) *tm {

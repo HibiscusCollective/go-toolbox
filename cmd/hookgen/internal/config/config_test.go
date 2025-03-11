@@ -24,40 +24,40 @@ func TestConfig(t *testing.T) {
 		},
 		"should return a valid config": func(t testing.TB, g gomega.Gomega) {
 			cfg, err := config.Create(
-				must.Succeed(config.CreateProject("test", "test", "template")).OrFailTest(t),
-				must.Succeed(config.CreateProject("test2", "test2", "template2")).OrFailTest(t),
+				must.GetOrFailTest(t, func() (config.Project, error) { return config.CreateProject("test", "test", "template") }),
+				must.GetOrFailTest(t, func() (config.Project, error) { return config.CreateProject("test2", "test2", "template2") }),
 			)
 
 			g.Expect(err).To(gomega.BeNil())
 			g.Expect(cfg.Projects()).To(gomega.Equal([]config.Project{
-				must.Succeed(config.CreateProject("test", "test", "template")).OrFailTest(t),
-				must.Succeed(config.CreateProject("test2", "test2", "template2")).OrFailTest(t),
+				must.GetOrFailTest(t, func() (config.Project, error) { return config.CreateProject("test", "test", "template") }),
+				must.GetOrFailTest(t, func() (config.Project, error) { return config.CreateProject("test2", "test2", "template2") }),
 			}))
 		},
 		"should filter out empty projects from the config": func(t testing.TB, g gomega.Gomega) {
 			cfg, err := config.Create(
-				must.Succeed(config.CreateProject("test", "test", "template")).OrFailTest(t),
+				must.GetOrFailTest(t, func() (config.Project, error) { return config.CreateProject("test", "test", "template") }),
 				config.ZeroProject(),
-				must.Succeed(config.CreateProject("test2", "test2", "template2")).OrFailTest(t),
+				must.GetOrFailTest(t, func() (config.Project, error) { return config.CreateProject("test2", "test2", "template2") }),
 			)
 
 			g.Expect(err).To(gomega.BeNil())
 			g.Expect(cfg.Projects()).To(gomega.Equal([]config.Project{
-				must.Succeed(config.CreateProject("test", "test", "template")).OrFailTest(t),
-				must.Succeed(config.CreateProject("test2", "test2", "template2")).OrFailTest(t),
+				must.GetOrFailTest(t, func() (config.Project, error) { return config.CreateProject("test", "test", "template") }),
+				must.GetOrFailTest(t, func() (config.Project, error) { return config.CreateProject("test2", "test2", "template2") }),
 			}))
 		},
 		"should filter out nil projects from the config": func(t testing.TB, g gomega.Gomega) {
 			cfg, err := config.Create(
-				must.Succeed(config.CreateProject("test", "test", "template")).OrFailTest(t),
+				must.GetOrFailTest(t, func() (config.Project, error) { return config.CreateProject("test", "test", "template") }),
 				nil,
-				must.Succeed(config.CreateProject("test2", "test2", "template2")).OrFailTest(t),
+				must.GetOrFailTest(t, func() (config.Project, error) { return config.CreateProject("test2", "test2", "template2") }),
 			)
 
 			g.Expect(err).To(gomega.BeNil())
 			g.Expect(cfg.Projects()).To(gomega.Equal([]config.Project{
-				must.Succeed(config.CreateProject("test", "test", "template")).OrFailTest(t),
-				must.Succeed(config.CreateProject("test2", "test2", "template2")).OrFailTest(t),
+				must.GetOrFailTest(t, func() (config.Project, error) { return config.CreateProject("test", "test", "template") }),
+				must.GetOrFailTest(t, func() (config.Project, error) { return config.CreateProject("test2", "test2", "template2") }),
 			}))
 		},
 		"should return an error if the projects list is filtered to empty": func(t testing.TB, g gomega.Gomega) {
