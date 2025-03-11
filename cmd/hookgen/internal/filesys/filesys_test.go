@@ -31,7 +31,7 @@ func TestCreateFile(t *testing.T) {
 
 			got, err := afs.Open(path)
 			g.Expect(err).To(gomega.BeNil())
-			g.Expect(string(must.GetOrFailTest(t, func() ([]byte, error) { return io.ReadAll(got) }))).To(gomega.Equal(content))
+			g.Expect(string(must.GetOrFailTest(io.ReadAll(got))(t))).To(gomega.Equal(content))
 		},
 		"should create a writeable file in a directory": func(t testing.TB, g gomega.Gomega) {
 			const (
@@ -49,7 +49,7 @@ func TestCreateFile(t *testing.T) {
 
 			got, err := afs.Open(path)
 			g.Expect(err).To(gomega.BeNil())
-			g.Expect(string(must.GetOrFailTest(t, func() ([]byte, error) { return io.ReadAll(got) }))).To(gomega.Equal(content))
+			g.Expect(string(must.GetOrFailTest(io.ReadAll(got))(t))).To(gomega.Equal(content))
 		},
 	}
 

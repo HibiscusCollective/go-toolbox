@@ -7,8 +7,7 @@ import (
 )
 
 // GetOrPanic panics if the error is not nil
-func GetOrPanic[T any](fn func() (T, error)) T {
-	val, err := fn()
+func GetOrPanic[T any](val T, err error) T {
 	if err != nil {
 		panic(fmt.Sprintf("unexpected error: %v", err))
 	}
@@ -16,25 +15,25 @@ func GetOrPanic[T any](fn func() (T, error)) T {
 }
 
 // GetOrFailTest fails the test if the error is not nil
-func GetOrFailTest[T any](t testing.TB, fn func() (T, error)) T {
-	val, err := fn()
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
+func GetOrFailTest[T any](val T, err error) func(t testing.TB) T {
+	return func(t testing.TB) T {
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		return val
 	}
-
-	return val
 }
 
 // DoOrPanic panics if the error is not nil
-func DoOrPanic(fn func() error) {
-	if err := fn(); err != nil {
+func DoOrPanic(err error) {
+	if err != nil {
 		panic(fmt.Sprintf("unexpected error: %v", err))
 	}
 }
 
 // DoOrFailTest fails the test if the error is not nil
-func DoOrFailTest(t testing.TB, fn func() error) {
-	if err := fn(); err != nil {
+func DoOrFailTest(t testing.TB, err error) {
+	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
